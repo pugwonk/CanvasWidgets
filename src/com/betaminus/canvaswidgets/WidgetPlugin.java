@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
-
 import java.util.Arrays;
 
 import android.content.ContentUris;
@@ -18,6 +17,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -25,21 +27,12 @@ import android.util.Log;
 
 import com.betaminus.canvaswidgets.R;
 import com.pennas.pebblecanvas.plugin.PebbleCanvasPlugin;
+import com.pennas.pebblecanvas.plugin.PebbleCanvasPlugin.ImagePluginDefinition;
 
 public class WidgetPlugin extends PebbleCanvasPlugin {
 	public static final String LOG_TAG = "CANV_WIDGET";
 	
-	public static final int PLUGGEDIN_ID = 1; // Needs to be unique only within this plugin package
-	
-	private static final String[] MASKS = { "%T", "%P" };
-	private static final int MASK_TIME = 0;
-	private static final int MASK_POWERSTATE = 1;
-	
-	private static class PowerStateChanged {
-		Date time;
-		String state;
-	}
-	private static PowerStateChanged current_state = new PowerStateChanged();
+	public static final int WIDGET_ID = 1; // Needs to be unique only within this plugin package
 	
 	// send plugin metadata to Canvas when requested
 	@Override
@@ -49,58 +42,39 @@ public class WidgetPlugin extends PebbleCanvasPlugin {
 		// create a list of plugins provided by this app
 		ArrayList<PluginDefinition> plugins = new ArrayList<PluginDefinition>();
 		
-		// now playing (text)
-		TextPluginDefinition tplug = new TextPluginDefinition();
-		tplug.id = PLUGGEDIN_ID;
-		tplug.name = context.getString(R.string.plugin_name);
-		tplug.format_mask_descriptions = new ArrayList<String>(Arrays.asList(context.getResources().getStringArray(R.array.format_mask_descs)));
-		// populate example content for each field (optional) to be display in the format mask editor
-		ArrayList<String> examples = new ArrayList<String>();
-		examples.add("10:35");
-		examples.add("Plugged in");
-		tplug.format_mask_examples = examples;
-		tplug.format_masks = new ArrayList<String>(Arrays.asList(MASKS));
-		tplug.default_format_string = "%T: %P";
-		plugins.add(tplug);
-		
+		// chart
+		ImagePluginDefinition iplug = new ImagePluginDefinition();
+		iplug.id = WIDGET_ID;
+		iplug.name = context.getString(R.string.plugin_name) + " 120x120";
+		iplug.params_description = "Widget";
+		plugins.add(iplug);
+
 		return plugins;
 	}
 	
-	// send current text values to canvas when requested
 	@Override
-	protected String get_format_mask_value(int def_id, String format_mask, Context context, String param) {
-		Log.i(LOG_TAG, "get_format_mask_value def_id = " + def_id + " format_mask = '" + format_mask + "'");
-		if (def_id == PLUGGEDIN_ID) {
-			// which field to return current value for?
-			if (format_mask.equals(MASKS[MASK_TIME])) {
-				return new SimpleDateFormat("H:mm:ss").format(Calendar.getInstance().getTime());
-			} else if (format_mask.equals(MASKS[MASK_POWERSTATE])) {
-				return current_state.state;
-			}
-		}
-		Log.i(LOG_TAG, "no matching mask found");
-		return null;
+	protected String get_format_mask_value(int def_id, String format_mask,
+			Context context, String param) {
+		return "";
 	}
 	
 	// send bitmap value to canvas when requested
 	@Override
 	protected Bitmap get_bitmap_value(int def_id, Context context, String param) {
-		return null;
+		Random rnd = new Random();
+		Paint paint = new Paint();
+        Bitmap b = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas(b);
+		for (int i = 0; i < 20; i++) {
+			paint.setARGB(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+			c.drawRect(rnd.nextInt(120), rnd.nextInt(120), rnd.nextInt(120), rnd.nextInt(120), paint); 
+		}
+		return b;
 	}
 
 	
 	public static void stateChanged(String action, Context context) {
-        
-        if(action.equals(Intent.ACTION_POWER_CONNECTED)) {
-            // Do something when power connected
-        	current_state.state = "Plugged in";
-        }
-        else if(action.equals(Intent.ACTION_POWER_DISCONNECTED)) {
-            // Do something when power disconnected
-        	current_state.state = "On battery";
-        }
-        
-		notify_canvas_updates_available(PLUGGEDIN_ID, context);
+		notify_canvas_updates_available(WIDGET_ID, context);
 	}
 
 }

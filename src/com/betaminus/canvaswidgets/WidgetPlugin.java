@@ -31,17 +31,18 @@ import com.pennas.pebblecanvas.plugin.PebbleCanvasPlugin.ImagePluginDefinition;
 
 public class WidgetPlugin extends PebbleCanvasPlugin {
 	public static final String LOG_TAG = "CANV_WIDGET";
-	
+	private static Bitmap _current;
+
 	public static final int WIDGET_ID = 1; // Needs to be unique only within this plugin package
-	
+
 	// send plugin metadata to Canvas when requested
 	@Override
 	protected ArrayList<PluginDefinition> get_plugin_definitions(Context context) {
 		Log.i(LOG_TAG, "get_plugin_definitions");
-		
+
 		// create a list of plugins provided by this app
 		ArrayList<PluginDefinition> plugins = new ArrayList<PluginDefinition>();
-		
+
 		// chart
 		ImagePluginDefinition iplug = new ImagePluginDefinition();
 		iplug.id = WIDGET_ID;
@@ -51,30 +52,33 @@ public class WidgetPlugin extends PebbleCanvasPlugin {
 
 		return plugins;
 	}
-	
+
 	@Override
 	protected String get_format_mask_value(int def_id, String format_mask,
 			Context context, String param) {
 		return "";
 	}
-	
+
 	// send bitmap value to canvas when requested
 	@Override
 	protected Bitmap get_bitmap_value(int def_id, Context context, String param) {
-		Random rnd = new Random();
-		Paint paint = new Paint();
-        Bitmap b = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888);
-		Canvas c = new Canvas(b);
-		for (int i = 0; i < 20; i++) {
-			paint.setARGB(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-			c.drawRect(rnd.nextInt(120), rnd.nextInt(120), rnd.nextInt(120), rnd.nextInt(120), paint); 
+		if (_current != null)
+			return _current;
+		else {
+			Random rnd = new Random();
+			Paint paint = new Paint();
+			Bitmap b = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888);
+			Canvas c = new Canvas(b);
+			for (int i = 0; i < 20; i++) {
+				paint.setARGB(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+				c.drawRect(rnd.nextInt(120), rnd.nextInt(120), rnd.nextInt(120), rnd.nextInt(120), paint); 
+			}
+			return b;
 		}
-		return b;
 	}
 
-	
-	public static void stateChanged(String action, Context context) {
+	public static void stateChanged(Bitmap current, Context context) {
+		_current = current;
 		notify_canvas_updates_available(WIDGET_ID, context);
 	}
-
 }

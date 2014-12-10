@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:onClick="btnPick_Click"
+    android:id="@+id/mainLayout"
     android:orientation="vertical" >
 
     <TextView
@@ -10,4 +12,17 @@
         android:layout_height="wrap_content"
         android:text="hello" />
 
+    <Button
+        android:id="@+id/btnPick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="btnPick_Click"
+        android:text="Add widget" />
+
+    <Button
+        android:id="@+id/btnPoke"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="btnPoke_Click"
+        android:text="Push to Pebble" />
 </LinearLayout>

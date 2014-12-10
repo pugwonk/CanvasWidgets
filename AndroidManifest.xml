@@ -20,14 +20,6 @@
                 <action android:name="com.pennas.pebblecanvas.plugin.REQUEST_UPDATE" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name="com.betaminus.canvaswidgets.WidgetReceiver"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
-            </intent-filter>
-        </receiver>
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"

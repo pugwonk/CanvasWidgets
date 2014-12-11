@@ -58,10 +58,18 @@ public class WidgetPlugin extends PebbleCanvasPlugin {
 			Context context, String param) {
 		return "";
 	}
+	
+	private void startService(Context context) {
+		// Service will only get started once, so no great problem
+		// re-calling this
+		Intent tickerService = new Intent(context, ServicePart.class);
+		context.startService(tickerService);
+	}
 
 	// send bitmap value to canvas when requested
 	@Override
 	protected Bitmap get_bitmap_value(int def_id, Context context, String param) {
+		startService(context);
 		if (_current != null)
 			return _current;
 		else {

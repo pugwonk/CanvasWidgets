@@ -20,19 +20,28 @@ public class MainActivity extends Activity {
 	final int REQUEST_CREATE_APPWIDGET = 5;
 
 	AppWidgetManager appWidgetManager;
-	AppWidgetHost appWidgetHost;
+	MyAppWidgetHost appWidgetHost;
 	AppWidgetHostView hostView;
+	boolean startOnce = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
+
+	    appWidgetManager = AppWidgetManager.getInstance(this);
+	    appWidgetHost = new MyAppWidgetHost(this, APPWIDGET_HOST_ID);
+
+	    // Start listening to pending intents from the widgets
+	    appWidgetHost.startListening();
+	    addWidget(69); // add the clock, for testing. 6 in emulator, 69 on phone
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+	    appWidgetHost.stopListening();
 	}
 
 	@Override
@@ -119,7 +128,9 @@ public class MainActivity extends Activity {
 	private void addWidget(int appWidgetId) {
 		AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
 
-	    hostView = appWidgetHost.createView(this, appWidgetId, appWidgetInfo);
+	    AppWidgetHostView oldHostView = appWidgetHost.createView(this, appWidgetId, appWidgetInfo);
+	    hostView = oldHostView;
+	    //hostView = new MyAppWidgetHostView(this, oldHostView);
 	    hostView.setAppWidget(appWidgetId, appWidgetInfo);
 	    // Add  it on the layout you want
 	    LinearLayout myLayout = (LinearLayout)findViewById(R.id.mainLayout);
@@ -138,18 +149,11 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStart() {
 	    super.onStart();
-	    appWidgetManager = AppWidgetManager.getInstance(this);
-	    appWidgetHost = new AppWidgetHost(this, APPWIDGET_HOST_ID);
-
-	    // Start listening to pending intents from the widgets
-	    appWidgetHost.startListening();
-	    addWidget(69); // add the clock, for testing
 	    }
 
 	@Override
 	protected void onStop() {
 	    super.onStop();
-	    appWidgetHost.stopListening();
 	}
 	
 	public void btnPick_Click(View view) {
@@ -157,7 +161,8 @@ public class MainActivity extends Activity {
 	}
 
 	public void btnPoke_Click(View view) {
-	    WidgetPlugin.stateChanged(bitmapFromView(hostView, 120, 120), this);
+	    WidgetPlugin.stateChanged(bitmapFromView(hostView, hostView.getWidth(), hostView.getHeight()), this);
+	    //WidgetPlugin.stateChanged(bitmapFromView(hostView, 120, 120), this);
 	}
 
 	private Bitmap bitmapFromView(View v, int width, int height) {

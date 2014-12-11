@@ -59,7 +59,7 @@ public class WidgetPlugin extends PebbleCanvasPlugin {
 		return "";
 	}
 	
-	private void startService(Context context) {
+	public static void startService(Context context) {
 		// Service will only get started once, so no great problem
 		// re-calling this
 		Intent tickerService = new Intent(context, ServicePart.class);

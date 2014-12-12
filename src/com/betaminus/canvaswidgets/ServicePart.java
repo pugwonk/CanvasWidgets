@@ -14,9 +14,12 @@ import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class ServicePart extends Service {
 	private static Timer timer = new Timer();
@@ -24,8 +27,9 @@ public class ServicePart extends Service {
 	final int APPWIDGET_HOST_ID = 2048;
 
 	public static AppWidgetManager appWidgetManager;
-	public static 	MyAppWidgetHost appWidgetHost;
+	public static MyAppWidgetHost appWidgetHost;
 	public static AppWidgetHostView hostView;
+	public static LinearLayout viewWindow;
 
 	public IBinder onBind(Intent arg0) {
 		return null;
@@ -51,9 +55,13 @@ public class ServicePart extends Service {
 		hostView = oldHostView;
 		//hostView = new MyAppWidgetHostView(this, oldHostView);
 		hostView.setAppWidget(appWidgetId, appWidgetInfo);
+
 		// Add  it on the layout you want
-		//LinearLayout myLayout = (LinearLayout)findViewById(R.id.mainLayout);
-		//myLayout.addView(hostView);
+		//viewWindow = new LinearLayout(ctx);
+		//viewWindow.setOrientation(LinearLayout.VERTICAL);
+		//viewWindow.setLayoutParams(new LayoutParams(300, 300));
+		//viewWindow.addView(hostView);
+		//hostView.setLayoutParams(new LayoutParams(300, 300));
 	}
 
 	// Get an instance of the selected widget as a AppWidgetHostView
@@ -104,8 +112,19 @@ public class ServicePart extends Service {
 		}
 	}
 
-	public static void PokeUpdate() {
-		//WidgetPlugin.stateChanged(bitmapFromView(hostView, hostView.getWidth(), hostView.getHeight()), ctx);
-		WidgetPlugin.stateChanged(bitmapFromView(hostView, 300, 300), ctx);
+	public static Bitmap PokeUpdate() {
+		Log.i(WidgetPlugin.LOG_TAG, "Sending bitmap from service to plugin");
+		//Bitmap b = bitmapFromView(hostView, hostView.getWidth(), hostView.getHeight()), ctx);
+		TextView tView = new TextView(ctx);
+		tView.setText("Hello, This is a view created programmatically! " +
+				"You CANNOT change me that easily :-)");
+		tView.setLayoutParams(new LayoutParams(
+				LayoutParams.MATCH_PARENT,
+				LayoutParams.WRAP_CONTENT));		
+		Bitmap b = bitmapFromView(tView, 100, 100);
+		//Bitmap b = bitmapFromView(hostView, 480, 480);
+		//Bitmap b = WidgetPlugin.demoBitmap();
+		WidgetPlugin.stateChanged(b, ctx);
+		return b;
 	}
 }

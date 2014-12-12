@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class MainActivity extends Activity {
@@ -123,7 +124,11 @@ public class MainActivity extends Activity {
 	}
 
 	public void btnPoke_Click(View view) {
-		ServicePart.PokeUpdate();
+		Bitmap sent = ServicePart.PokeUpdate();
+		//LinearLayout myLayout = (LinearLayout)findViewById(R.id.mainLayout);
+		//myLayout.addView(ServicePart.hostView);
+		ImageView iv = (ImageView)findViewById(R.id.ivPreview);
+		iv.setImageBitmap(sent);
 	}
 
 }

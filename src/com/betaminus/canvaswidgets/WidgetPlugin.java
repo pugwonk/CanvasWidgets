@@ -73,16 +73,20 @@ public class WidgetPlugin extends PebbleCanvasPlugin {
 		if (_current != null)
 			return _current;
 		else {
-			Random rnd = new Random();
-			Paint paint = new Paint();
-			Bitmap b = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888);
-			Canvas c = new Canvas(b);
-			for (int i = 0; i < 20; i++) {
-				paint.setARGB(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-				c.drawRect(rnd.nextInt(120), rnd.nextInt(120), rnd.nextInt(120), rnd.nextInt(120), paint); 
-			}
-			return b;
+			return demoBitmap();
 		}
+	}
+
+	public static Bitmap demoBitmap() {
+		Random rnd = new Random();
+		Paint paint = new Paint();
+		Bitmap b = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas(b);
+		for (int i = 0; i < 20; i++) {
+			paint.setARGB(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+			c.drawRect(rnd.nextInt(120), rnd.nextInt(120), rnd.nextInt(120), rnd.nextInt(120), paint); 
+		}
+		return b;
 	}
 
 	public static void stateChanged(Bitmap current, Context context) {

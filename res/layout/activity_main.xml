@@ -25,4 +25,17 @@
         android:layout_height="wrap_content"
         android:onClick="btnPoke_Click"
         android:text="Push to Pebble" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sent:" />
+
+    <ImageView
+        android:id="@+id/ivPreview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/canvas_icon" />
+
 </LinearLayout>
